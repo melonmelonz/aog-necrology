@@ -1,0 +1,12 @@
+# harvested source material — regenerate with pipeline/harvest.py + chunk.py
+data/pdfs/
+data/pages/
+data/chunks/
+data/compound/
+data/harvest.log
+
+# site build artifacts
+site/node_modules/
+site/.next/
+site/out/
+site/next-env.d.ts

@@ -1,0 +1,368 @@
+:root {
+  --paper: #f7f6f2;
+  --ink: #14171a;
+  --cadet: #5a6472;
+  --gold: #8c6f1f;
+  --hairline: #d9d9d3;
+  --paper-raised: #fdfcf9;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.shell {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem 6rem;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  text-align: center;
+  margin-bottom: 2.75rem;
+}
+
+.eyebrow {
+  font-family: var(--font-data), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.masthead h1 {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.1rem, 6vw, 3.1rem);
+  letter-spacing: 0.06em;
+  margin: 0.6rem 0 0.35rem;
+}
+
+.masthead h1 .years {
+  white-space: nowrap;
+}
+
+.masthead .subtitle {
+  color: var(--cadet);
+  font-size: 0.95rem;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.double-rule {
+  border: 0;
+  border-top: 3px double var(--ink);
+  margin: 1.4rem auto 0;
+  width: 100%;
+}
+
+/* ---------- search ---------- */
+
+.controls {
+  margin-bottom: 2rem;
+}
+
+.searchbox {
+  width: 100%;
+  font-family: var(--font-body), Georgia, serif;
+  font-size: 1.05rem;
+  padding: 0.65rem 0.2rem;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+}
+
+.searchbox::placeholder {
+  color: var(--cadet);
+  font-style: italic;
+}
+
+.searchbox:focus-visible {
+  outline: none;
+  border-bottom-color: var(--gold);
+  box-shadow: 0 1px 0 var(--gold);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 0.8rem;
+  align-items: baseline;
+}
+
+.filters label {
+  font-family: var(--font-data), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cadet);
+}
+
+.filters select,
+.filters input[type="text"] {
+  font-family: var(--font-data), monospace;
+  font-size: 0.8rem;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted var(--cadet);
+  padding: 0.15rem 0.1rem;
+  margin-left: 0.4rem;
+}
+
+.filters select:focus-visible,
+.filters input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.count {
+  margin-left: auto;
+  font-family: var(--font-data), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--cadet);
+}
+
+/* ---------- register ---------- */
+
+.year-heading {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
+  margin: 2.6rem 0 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.year-heading::before,
+.year-heading::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--hairline);
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.42rem 0.25rem;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:hover .name,
+.row[aria-expanded="true"] .name {
+  color: var(--gold);
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.cullum {
+  font-family: var(--font-data), monospace;
+  font-size: 0.72rem;
+  color: var(--cadet);
+  min-width: 3.2rem;
+  flex-shrink: 0;
+}
+
+.name {
+  font-family: var(--font-display), Georgia, serif;
+  font-variant: small-caps;
+  letter-spacing: 0.09em;
+  font-size: 1.02rem;
+  transition: color 120ms ease;
+}
+
+.leader {
+  flex: 1;
+  border-bottom: 1px dotted var(--cadet);
+  opacity: 0.55;
+  transform: translateY(-0.28em);
+  min-width: 1.5rem;
+}
+
+.row-meta {
+  font-family: var(--font-data), monospace;
+  font-size: 0.74rem;
+  color: var(--cadet);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.row-meta .notice-mark {
+  color: var(--gold);
+}
+
+/* ---------- detail ---------- */
+
+.detail {
+  margin: 0.4rem 0 1.6rem;
+  padding: 1.4rem 1.6rem 1.5rem;
+  background: var(--paper-raised);
+  border-top: 3px double var(--ink);
+  border-bottom: 1px solid var(--hairline);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .detail {
+    animation: settle 220ms ease-out;
+  }
+  @keyframes settle {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+.detail-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.15rem 1.2rem;
+  font-size: 0.85rem;
+  margin-bottom: 1.2rem;
+}
+
+.detail-meta dt {
+  font-family: var(--font-data), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cadet);
+  padding-top: 0.18rem;
+}
+
+.detail-meta dd {
+  color: var(--ink);
+}
+
+.obit {
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.obit p + p {
+  margin-top: 0.9rem;
+  text-indent: 1.6em;
+}
+
+.obit-author {
+  text-align: right;
+  font-family: var(--font-display), Georgia, serif;
+  font-variant: small-caps;
+  letter-spacing: 0.12em;
+  margin-top: 1.1rem;
+}
+
+.source-line {
+  margin-top: 1.3rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--font-data), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  color: var(--cadet);
+}
+
+.source-line a {
+  color: var(--gold);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.source-line a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.flag {
+  color: var(--gold);
+}
+
+/* ---------- states ---------- */
+
+.status {
+  text-align: center;
+  color: var(--cadet);
+  font-style: italic;
+  margin: 3rem 0;
+}
+
+.truncated {
+  text-align: center;
+  font-family: var(--font-data), monospace;
+  font-size: 0.74rem;
+  color: var(--cadet);
+  margin-top: 2rem;
+}
+
+.colophon {
+  margin-top: 4.5rem;
+  padding-top: 1.2rem;
+  border-top: 3px double var(--ink);
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--cadet);
+}
+
+.colophon a {
+  color: var(--gold);
+}
+
+@media (max-width: 540px) {
+  .cullum {
+    display: none;
+  }
+  .row-meta {
+    font-size: 0.68rem;
+  }
+  .detail {
+    padding: 1.1rem 0.9rem 1.2rem;
+  }
+  .detail-meta {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .detail-meta dt {
+    margin-top: 0.5rem;
+  }
+}

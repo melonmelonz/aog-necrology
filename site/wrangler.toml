@@ -1,0 +1,10 @@
+# Cloudflare Pages config for direct (wrangler) deploys of the static site.
+# The site serves at the root of its *.pages.dev domain, so DO NOT set
+# AOG_BASE_PATH when building for Cloudflare (basePath must be empty here;
+# it is only set for GitHub Pages subpath serving).
+#
+#   cd site && npm run build && npx wrangler pages deploy   # uses this file
+#
+name = "aog-necrology"
+pages_build_output_dir = "./out"
+compatibility_date = "2026-07-03"

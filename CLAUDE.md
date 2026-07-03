@@ -107,10 +107,22 @@ always resumable — a crashed or rate-limited wave loses nothing already writte
 ## The site
 
 `site/` is a **static** Next.js 16 App-Router app (`output: 'export'`), no
-backend. `site/src/app/register.tsx` is the whole UI: it fetches
-`public/data/index.json` (a compact search index of every record), searches it
-client-side (name, class, Cullum number, place of death, year), and lazy-fetches
+backend. Routes:
+- `/` (`src/app/page.tsx`) — marketing **landing page**: value-prop headline,
+  CTA, specimen visual, the four-stage workflow, live-demo band. This is the
+  client-facing pitch; the AOG necrology is its live demo/case study.
+- `/archive` (`src/app/archive/page.tsx`) — the **search tool** (the register).
+
+`src/app/register.tsx` is the search UI: it fetches `public/data/index.json`
+(a compact search index of every record), searches it client-side (name, class,
+Cullum number, place of death, year), and lazy-fetches
 `public/data/years/{year}.json` for the full record when a row is expanded.
+`src/app/exports.ts` powers the one-click **export toolbar** — CSV, JSON,
+Markdown, and Print/PDF of the current filtered results, generated in-browser.
+
+Deployment: see `DEPLOY.md` (Cloudflare Pages, root serving, `AOG_BASE_PATH`
+unset; or GitHub Pages via `.github/workflows/pages.yml`, subpath serving).
+Client collateral (proposal, service agreement — no pricing) lives in `business/`.
 
 Design is deliberate and documented in the code/commit — archival register:
 rag-paper palette, Old Standard TT small-caps names on dotted leader lines,

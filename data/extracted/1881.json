@@ -1,0 +1,28 @@
+[
+ {
+  "last_name": "Wheeler",
+  "first_name": "Otis",
+  "middle_name": null,
+  "name_raw": "OTIS WHEELER",
+  "class_year": 1821,
+  "class_label": null,
+  "cullum_number": "281",
+  "date_of_death": "1872-06-01",
+  "date_of_death_raw": "June 1, 1872",
+  "location_of_death": "Troy, Missouri",
+  "age_at_death": 75,
+  "date_of_birth": "1797",
+  "date_of_birth_raw": "1797",
+  "obit_text": "Died, June 1, 1872, at Troy, Missouri, aged 75.\n\nOtis Wheeler was born in New Hampshire in 1797; appointed Cadet from the same State October 1, 1817; graduated July 1, 1821, and promoted Brevet Second Lieutenant Third Infantry July 1, 1821; Second Lieutenant same day; First Lieutenant April 28, 1826; Captain October 31, 1835; resigned February 29, 1844.\n\nHe served on frontier duty in Wisconsin, Michigan, Missouri and Arkansas until 1840; then in the Florida war until 1843; at Jefferson Barracks, Missouri, until his resignation, when he settled on a farm at Troy, Missouri, where he died. Of his career in civil life nothing is known by the Association.",
+  "author": null,
+  "interment_location": null,
+  "entry_type": "obituary",
+  "source_report_year": 1881,
+  "page_number": 61,
+  "page_end": 61,
+  "obit_link": "https://usmalibrary.contentdm.oclc.org/digital/collection/aogreunion/id/9834",
+  "confidence": "high",
+  "confidence_notes": null,
+  "needs_vision": false
+ }
+]

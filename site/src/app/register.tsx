@@ -1,6 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { exportRows, type ExportFormat } from "./exports";
+
+const EXPORTS: { fmt: ExportFormat; label: string; hint: string }[] = [
+  { fmt: "csv", label: "CSV", hint: "Spreadsheet (Excel, Sheets)" },
+  { fmt: "json", label: "JSON", hint: "Structured data" },
+  { fmt: "markdown", label: "Markdown", hint: "Formatted document" },
+  { fmt: "print", label: "Print / PDF", hint: "Printable table" },
+];
 
 type IndexRow = {
   id: string;
@@ -87,6 +95,15 @@ export default function Register() {
     });
   }, [index, query, entryType, reportYear]);
 
+  const exportName = [
+    "aog-necrology",
+    reportYear !== "all" ? reportYear : null,
+    entryType !== "all" ? entryType : null,
+    query.trim() ? query.trim().slice(0, 24) : null,
+  ]
+    .filter(Boolean)
+    .join("-");
+
   const shown = matches.slice(0, SHOW_CAP);
 
   const groups = useMemo(() => {
@@ -148,6 +165,23 @@ export default function Register() {
           <span className="count" role="status">
             {matches.length.toLocaleString()} of {index.length.toLocaleString()} records
           </span>
+        </div>
+        <div className="exports" role="group" aria-label="Export current results">
+          <span className="exports-label">
+            Export {matches.length.toLocaleString()} result{matches.length === 1 ? "" : "s"}
+          </span>
+          {EXPORTS.map((e) => (
+            <button
+              key={e.fmt}
+              type="button"
+              className="export-btn"
+              disabled={matches.length === 0}
+              title={e.hint}
+              onClick={() => exportRows(matches, e.fmt, exportName)}
+            >
+              {e.label}
+            </button>
+          ))}
         </div>
       </div>
 

@@ -23,6 +23,7 @@ body {
   font-family: var(--font-body), Georgia, serif;
   font-size: 1rem;
   line-height: 1.55;
+  overflow-x: hidden;
 }
 
 .shell {
@@ -140,6 +141,56 @@ body {
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   color: var(--cadet);
+}
+
+/* ---------- export toolbar ---------- */
+
+.exports {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--hairline);
+}
+
+.exports-label {
+  font-family: var(--font-data), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cadet);
+  margin-right: 0.15rem;
+}
+
+.export-btn {
+  font-family: var(--font-data), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--cadet);
+  border-radius: 0;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.export-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.export-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ---------- register ---------- */
@@ -346,6 +397,278 @@ body {
 
 .colophon a {
   color: var(--gold);
+}
+
+/* ---------- landing page ---------- */
+
+.back-link,
+.back-link:visited {
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.2em;
+}
+.back-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.landing {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+}
+
+.lp-hero {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 5rem 0 3.5rem;
+  text-align: center;
+}
+
+.lp-headline {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 5.2vw, 3.3rem);
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+  margin: 0.8rem 0 1.2rem;
+}
+
+.lp-sub {
+  color: var(--cadet);
+  font-size: 1.08rem;
+  line-height: 1.65;
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.lp-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  justify-content: center;
+  margin: 2rem 0 0;
+}
+
+.lp-btn-primary,
+.lp-btn-primary:visited {
+  font-family: var(--font-data), monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.8rem 1.4rem;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  transition: background 140ms ease, color 140ms ease;
+}
+.lp-btn-primary:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+
+.lp-btn-ghost,
+.lp-btn-ghost:visited {
+  font-family: var(--font-data), monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 0.8rem 1.4rem;
+  text-decoration: none;
+  border: 1px solid var(--cadet);
+}
+.lp-btn-ghost:hover {
+  border-color: var(--ink);
+}
+
+.lp-btn-primary:focus-visible,
+.lp-btn-ghost:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.lp-specimen {
+  margin: 3.5rem auto 0;
+  max-width: 30rem;
+  text-align: left;
+  background: var(--paper-raised);
+  padding: 1.6rem 1.8rem;
+  box-shadow: 0 1px 0 var(--hairline), 0 18px 40px -30px rgba(20, 23, 26, 0.5);
+}
+
+.lp-specimen-rule {
+  border-top: 3px double var(--ink);
+}
+
+.lp-specimen-label {
+  font-family: var(--font-display), Georgia, serif;
+  font-variant: small-caps;
+  letter-spacing: 0.18em;
+  text-align: center;
+  color: var(--cadet);
+  font-size: 0.82rem;
+  margin: 0.7rem 0;
+}
+
+.lp-specimen-list {
+  list-style: none;
+  margin: 0.4rem 0;
+}
+.lp-specimen-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+}
+.lp-name {
+  font-family: var(--font-display), Georgia, serif;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  font-size: 0.98rem;
+}
+.lp-leader {
+  flex: 1;
+  border-bottom: 1px dotted var(--cadet);
+  opacity: 0.5;
+  transform: translateY(-0.28em);
+}
+.lp-meta {
+  font-family: var(--font-data), monospace;
+  font-size: 0.72rem;
+  color: var(--cadet);
+  white-space: nowrap;
+}
+
+.lp-band {
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  padding: 2.6rem 0;
+  margin: 1rem 0;
+}
+.lp-band p {
+  max-width: 40rem;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+.lp-band em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.lp-center {
+  text-align: center;
+}
+
+.lp-how {
+  padding: 4rem 0 3rem;
+}
+.lp-h2 {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  text-align: center;
+  letter-spacing: 0.03em;
+  margin: 0.4rem 0 2.4rem;
+}
+
+.lp-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.6rem;
+  counter-reset: none;
+}
+.lp-step {
+  border-top: 2px solid var(--ink);
+  padding-top: 1rem;
+}
+.lp-step-n {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.3rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.lp-step h3 {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  font-size: 1.15rem;
+  margin: 0.5rem 0 0.5rem;
+}
+.lp-step p {
+  color: var(--cadet);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.lp-demo {
+  background: var(--ink);
+  color: var(--paper);
+  margin: 2rem -100vw 0;
+  padding: 4rem 100vw;
+}
+.lp-demo-inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.lp-demo .eyebrow {
+  color: var(--gold);
+}
+.lp-demo .lp-h2 {
+  color: var(--paper);
+}
+.lp-demo-sub {
+  color: #b9c0cb;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  max-width: 34rem;
+  margin: 0 auto 2rem;
+}
+.lp-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  margin: 2rem 0 2.5rem;
+}
+.lp-stats div {
+  border-top: 1px solid #3a4049;
+  padding-top: 0.7rem;
+}
+.lp-stats dt {
+  font-family: var(--font-data), monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8b93a0;
+}
+.lp-stats dd {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.7rem;
+  margin-top: 0.2rem;
+}
+
+.lp-footer {
+  text-align: center;
+  padding: 3rem 0 1rem;
+  color: var(--cadet);
+  font-size: 0.9rem;
+}
+.lp-footer a {
+  color: var(--gold);
+}
+
+@media (max-width: 720px) {
+  .lp-steps,
+  .lp-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 540px) {

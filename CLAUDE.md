@@ -147,8 +147,24 @@ focus visible, reduced-motion respected.
 
 ## Current state
 
-See `python pipeline/status.py`. As of the initial build: all 72 reports
-harvested and chunked; extraction in progress wave-by-wave (1870 is a
-hand-checked pilot). When `todo.py --count` shows 0 remaining, the dataset is
-complete — do the final merge/build/site_data, commit, and the site is ready
-to deploy (a GitHub Pages workflow is in `.github/workflows/`).
+**Live site: https://melonmelonz.github.io/aog-necrology/** (GitHub Pages,
+enabled 2026-07-04; auto-deploys on every push to `main` touching `site/` or
+`dist/`). See `DEPLOY.md`. Cloudflare Pages is also wired (`site/wrangler.toml`)
+but needs a one-time `npx wrangler login` before `wrangler pages deploy`.
+
+Run `python pipeline/status.py` and `python pipeline/todo.py --count` for live
+progress. All 72 reports harvested and chunked (258 chunks). Extraction runs
+**wave-by-wave** — the tracked unit is a chunk, not a year, so a "year" can show
+few records simply because only its register chunk has run; its front necrology
+chunk (`_p001-060`) may still be in `todo.py`. 1870 is a hand-checked pilot.
+
+**To resume extraction (any session):**
+1. `python pipeline/todo.py --count` — see remaining chunks.
+2. Take a slice (~25-40 chunks) of `python pipeline/todo.py` output.
+3. `Workflow({ scriptPath: "<abs>/pipeline/extract.workflow.js", args: <slice> })`
+   (agents run on sonnet; small waves bound session-limit blast radius).
+4. `python pipeline/merge.py && python pipeline/build_db.py && python pipeline/site_data.py`
+5. `git add -A && git commit && git push` → live site auto-refreshes.
+When `todo.py --count` shows 0 remaining, run a QA pass for chunks that returned
+0 records but whose text contains death content (missed obits vs. correctly-
+skipped register), then the dataset is complete.

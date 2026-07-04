@@ -33,12 +33,18 @@ npx wrangler pages deploy          # uses site/wrangler.toml
 
 `wrangler.toml` names the project `aog-necrology` and points at `./out`.
 
-## GitHub Pages (already configured)
+## GitHub Pages — LIVE (enabled 2026-07-04)
+
+**The site is live at https://melonmelonz.github.io/aog-necrology/**
 
 `.github/workflows/pages.yml` builds the site with `AOG_BASE_PATH=/<repo-name>`
-(subpath serving) and deploys to Pages. Enable it once under
-**Settings → Pages → Source: GitHub Actions**; it then deploys on every push
-that touches `site/`, `dist/`, or the workflow.
+(subpath serving) and deploys to Pages. Pages is **already enabled** (source =
+GitHub Actions, set via `gh api --method POST repos/OWNER/REPO/pages -f
+build_type=workflow`). It now redeploys automatically on every push that
+touches `site/`, `dist/`, or the workflow — so after an extraction wave, the
+merge/build/site_data + commit/push refreshes the live site with no extra step.
+
+To force a rebuild without a push: `gh workflow run pages.yml`.
 
 ## Rebuilding the data first
 

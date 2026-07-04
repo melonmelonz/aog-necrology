@@ -3,6 +3,9 @@
 This file is context for Claude Code (and any coding agent). Read it first.
 The human-facing overview is in `README.md`; this file is how to *work* here.
 
+> **Just here to transcribe more years?** `HANDOFF.md` is the standalone runbook
+> for continuing the extraction and publishing it — start there.
+
 ## What this project is
 
 A database and static search site for **every obituary and death notice**

@@ -73,6 +73,10 @@ Record IDs are `uuid5` derived from source fields, so rebuilds never churn IDs.
 
 ## Working on it (for Kit)
 
+> **Continuing the transcription?** Point your Claude at **[`HANDOFF.md`](HANDOFF.md)** —
+> it is the complete, self-contained runbook for extracting more years and
+> publishing them, including how to split the work so two people don't collide.
+
 The repo is on GitHub at **github.com/melonmelonz/aog-necrology** and the site
 **auto-deploys on every push to `main`** (GitHub Pages — see `DEPLOY.md`). So the
 loop is: change, commit, push, and the live site rebuilds itself in ~1 minute.

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { readFileSync } from "fs";
 import path from "path";
+import Register from "./register";
 
 type Stats = {
   records: number;
@@ -19,9 +19,7 @@ function readStats(): Stats | null {
   }
 }
 
-const REPO = "https://github.com/melonmelonz/aog-necrology";
-
-export default function Frontispiece() {
+export default function Page() {
   const s = readStats();
   const tally =
     s && s.year_min && s.year_max
@@ -29,41 +27,36 @@ export default function Frontispiece() {
       : null;
 
   return (
-    <main className="frontispiece">
-      <div className="fp-plate">
-        <span className="fp-eyebrow">
-          Association of Graduates · United States Military Academy
-        </span>
+    <main>
+      <section className="hero">
+        <div className="hero-inner">
+          <span className="hero-eyebrow">
+            Association of Graduates · United States Military Academy
+          </span>
 
-        <h1 className="fp-title">Necrology</h1>
-        <div className="fp-years">1870 — 1941</div>
+          <h1 className="hero-title">In Memoriam</h1>
+          <div className="hero-years">1870 — 1941</div>
 
-        <p className="fp-dedication">
-          A memorial record of graduates of the Academy whose deaths were
-          reported to the Association of Graduates at its annual reunions —
-          each obituary transcribed from the printed report and linked to the
-          original scanned page.
-        </p>
+          <div className="ornament" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 7.1-1.01L12 2z" />
+            </svg>
+          </div>
 
-        <p className="fp-benediction">
-          “Well Done; Be Thou at Peace.”
-          <span className="attribution">The traditional farewell to a departed graduate</span>
-        </p>
+          <p className="hero-benediction">
+            “Well Done; Be Thou at Peace.”
+            <span className="hero-attr">The traditional farewell to a departed graduate</span>
+          </p>
 
-        <Link href="/archive" className="fp-enter">
-          Enter the register →
-        </Link>
-
-        {tally && <p className="fp-tally">{tally}</p>}
-
-        <p className="fp-under">
-          <Link href="/archive#deposit">Download the complete record</Link>
-          {"   ·   "}
-          <a href={REPO} target="_blank" rel="noopener noreferrer">
-            How this record was made
+          <a className="hero-enter" href="#register">
+            Enter the register <span className="arrow" aria-hidden="true">↓</span>
           </a>
-        </p>
-      </div>
+
+          {tally && <p className="hero-tally">{tally}</p>}
+        </div>
+      </section>
+
+      <Register />
     </main>
   );
 }

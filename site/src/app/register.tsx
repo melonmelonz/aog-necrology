@@ -57,7 +57,6 @@ export default function Register() {
       .catch(() => setLoadError(true));
   }, []);
 
-  // Fetch (and cache) the full records for one report year.
   const loadYear = useCallback(
     async (year: number): Promise<Record<string, Memorial>> => {
       if (yearCache[year]) return yearCache[year];
@@ -117,7 +116,6 @@ export default function Register() {
     if (next) loadYear(row.year).catch(() => {});
   }
 
-  // Print the current search results as memorial documents.
   async function printMatches() {
     if (!matches.length || busy) return;
     setBusy(true);
@@ -141,7 +139,6 @@ export default function Register() {
     }
   }
 
-  // Print an entire year's necrology (every memorial in that report).
   async function printYear(year: number) {
     if (busy) return;
     setBusy(true);
@@ -154,15 +151,12 @@ export default function Register() {
     }
   }
 
-  // Print the complete record — every memorial, every year.
   async function printAll() {
     if (busy) return;
     setBusy(true);
     try {
       const all: Memorial[] = await fetch("download/necrology.json").then((r) => r.json());
-      all.sort(
-        (a, b) => a.source_report_year - b.source_report_year || byPage(a, b),
-      );
+      all.sort((a, b) => a.source_report_year - b.source_report_year || byPage(a, b));
       printMemorials(all, "The Necrology of the Association of Graduates", "1870 – 1941");
     } finally {
       setBusy(false);
@@ -170,14 +164,32 @@ export default function Register() {
   }
 
   if (loadError)
-    return <p className="status">The register could not be opened. Refresh the page to try again.</p>;
-  if (!index) return <p className="status">Opening the register…</p>;
+    return (
+      <section className="register" id="register">
+        <p className="status">The register could not be opened. Refresh the page to try again.</p>
+      </section>
+    );
+  if (!index)
+    return (
+      <section className="register" id="register">
+        <p className="status">Opening the register…</p>
+      </section>
+    );
 
   const resultRows: ResultRow[] = matches;
 
   return (
-    <section aria-label="Register of the deceased">
-      <div className="controls">
+    <section className="register" id="register" aria-label="Register of the deceased">
+      <div className="reg-intro">
+        <h2>The Necrology · 1870–1941</h2>
+        <p>
+          Every graduate whose death was reported to the Association of Graduates —
+          transcribed from the printed reports, kept as written, and linked to the
+          original scanned page. Search a name below, or read the roll year by year.
+        </p>
+      </div>
+
+      <div className="searchbar">
         <input
           className="searchbox"
           type="search"
@@ -185,8 +197,13 @@ export default function Register() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search a name, class, Cullum number, or place of death"
           aria-label="Search the register"
-          autoFocus
         />
+        <span className="count" role="status">
+          {matches.length.toLocaleString()} of {index.length.toLocaleString()}
+        </span>
+      </div>
+
+      <div className="subcontrols">
         <div className="filters">
           <label>
             Entries
@@ -207,15 +224,10 @@ export default function Register() {
               ))}
             </select>
           </label>
-          <span className="count" role="status">
-            {matches.length.toLocaleString()} of {index.length.toLocaleString()}
-          </span>
         </div>
 
-        <div className="results-actions" role="group" aria-label="Do something with these results">
-          <span className="actions-label">
-            These {matches.length.toLocaleString()} result{matches.length === 1 ? "" : "s"} —
-          </span>
+        <div className="actions" role="group" aria-label="Print or export these results">
+          <span className="actions-label">These {matches.length.toLocaleString()} —</span>
           <button
             type="button"
             className="chip chip-gold"
@@ -253,7 +265,7 @@ export default function Register() {
       {groups.map((g) => (
         <div key={g.year} className="year-block">
           <div className="year-heading">
-            <h2>Annual Report of {g.year}</h2>
+            <h3>Annual Report of {g.year}</h3>
             <button
               type="button"
               className="year-print"

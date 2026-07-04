@@ -1,38 +1,35 @@
 import type { Metadata } from "next";
-import { Old_Standard_TT, Source_Serif_4, Courier_Prime } from "next/font/google";
+import { Cormorant_Garamond, EB_Garamond } from "next/font/google";
 import "./globals.css";
 
-const display = Old_Standard_TT({
+// Cormorant Garamond — high-contrast, engraved display for the masthead and
+// the names in the roll; set large and letter-spaced it reads like inscription.
+const display = Cormorant_Garamond({
   variable: "--font-display",
-  weight: ["400", "700"],
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   subsets: ["latin"],
 });
 
-const body = Source_Serif_4({
+// EB Garamond — the book-type lineage of 1870–1941 letterpress; the obituary prose.
+const body = EB_Garamond({
   variable: "--font-body",
-  subsets: ["latin"],
-});
-
-const data = Courier_Prime({
-  variable: "--font-data",
-  weight: ["400", "700"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Necrology · Association of Graduates, U.S.M.A. 1870–1941",
+  title: "Necrology · Association of Graduates, U.S.M.A. · 1870–1941",
   description:
-    "Every obituary and death notice published in the West Point Association of Graduates annual reports, 1870–1941, searchable and linked to the scanned source pages.",
+    "A memorial record of graduates of the United States Military Academy whose deaths were reported to the Association of Graduates at its annual reunions, 1870–1941 — searchable and linked to the original scanned pages.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${data.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>{children}</body>
     </html>
   );

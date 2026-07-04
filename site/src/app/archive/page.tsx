@@ -2,46 +2,42 @@ import Link from "next/link";
 import Register from "../register";
 
 export const metadata = {
-  title: "Search the register · AOG Necrology 1870–1941",
+  title: "The Register · Necrology of the A.O.G., U.S.M.A. · 1870–1941",
   description:
-    "Search every obituary and death notice in the USMA Association of Graduates annual reports, 1870–1941, and export the results.",
+    "Search every obituary and death notice reported to the Association of Graduates of the United States Military Academy, 1870–1941, and print or download the record.",
 };
 
 export default function Archive() {
   return (
     <div className="shell">
       <header className="masthead">
-        <p className="eyebrow">
-          <Link href="/" className="back-link">
-            ← Digital Archive Services
-          </Link>
-        </p>
-        <h1>
-          Necrology <span className="years">1870–1941</span>
-        </h1>
+        <Link href="/" className="back-link">
+          ← Frontispiece
+        </Link>
+        <h1>Necrology</h1>
+        <div className="years">1870 — 1941</div>
         <p className="subtitle">
-          Every obituary and death notice published in the annual reports of the
-          Association of Graduates, U.S. Military Academy — searchable, linked to
-          the scanned pages, and exportable in the format you need.
+          Every obituary and death notice reported to the Association of Graduates
+          of the United States Military Academy — searchable, linked to the
+          original scanned pages, and free to print or download.
         </p>
-        <hr className="double-rule" />
       </header>
 
       <Register />
 
       <footer className="colophon">
         <p>
-          Source: annual reunion reports digitized by the{" "}
+          Drawn from the annual reunion reports of the Association of Graduates,
+          digitized by the{" "}
           <a
             href="https://usmalibrary.contentdm.oclc.org/digital/collection/aogreunion/search"
             target="_blank"
             rel="noopener noreferrer"
           >
-            USMA Library
+            U.S. Military Academy Library
           </a>
-          . Text lightly corrected from the original OCR; names and dates kept
-          as printed. A working demonstration of the{" "}
-          <Link href="/">Digital Archive Services</Link> pipeline.
+          . Text lightly corrected from the original transcription; names and
+          dates kept as printed.
         </p>
       </footer>
     </div>

@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { exportRows, type ExportFormat } from "./exports";
-
-const EXPORTS: { fmt: ExportFormat; label: string; hint: string }[] = [
-  { fmt: "csv", label: "CSV", hint: "Spreadsheet (Excel, Sheets)" },
-  { fmt: "json", label: "JSON", hint: "Structured data" },
-  { fmt: "markdown", label: "Markdown", hint: "Formatted document" },
-  { fmt: "print", label: "Print / PDF", hint: "Printable table" },
-];
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  printMemorials,
+  exportData,
+  type Memorial,
+  type ResultRow,
+} from "./exports";
 
 type IndexRow = {
   id: string;
@@ -27,27 +25,6 @@ type IndexRow = {
   page: number | null;
 };
 
-type FullRecord = {
-  name_raw: string;
-  class_year: number | null;
-  class_label: string | null;
-  cullum_number: string | null;
-  date_of_death_raw: string | null;
-  location_of_death: string | null;
-  age_at_death: number | null;
-  date_of_birth_raw: string | null;
-  interment_location: string | null;
-  obit_text: string;
-  author: string | null;
-  entry_type: string;
-  source_report_year: number;
-  page_number: number | null;
-  page_end: number | null;
-  obit_link: string | null;
-  confidence: string;
-  needs_vision: boolean;
-};
-
 const SHOW_CAP = 400;
 
 function displayName(r: IndexRow) {
@@ -59,6 +36,10 @@ function classOf(r: { cls?: number | null; clsl?: string | null }) {
   return r.clsl || (r.cls ? String(r.cls) : null);
 }
 
+function byPage(a: Memorial, b: Memorial) {
+  return (a.page_number ?? 0) - (b.page_number ?? 0);
+}
+
 export default function Register() {
   const [index, setIndex] = useState<IndexRow[] | null>(null);
   const [loadError, setLoadError] = useState(false);
@@ -66,7 +47,8 @@ export default function Register() {
   const [entryType, setEntryType] = useState("all");
   const [reportYear, setReportYear] = useState("all");
   const [openId, setOpenId] = useState<string | null>(null);
-  const [yearCache, setYearCache] = useState<Record<number, Record<string, FullRecord>>>({});
+  const [yearCache, setYearCache] = useState<Record<number, Record<string, Memorial>>>({});
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     fetch("data/index.json")
@@ -74,6 +56,19 @@ export default function Register() {
       .then(setIndex)
       .catch(() => setLoadError(true));
   }, []);
+
+  // Fetch (and cache) the full records for one report year.
+  const loadYear = useCallback(
+    async (year: number): Promise<Record<string, Memorial>> => {
+      if (yearCache[year]) return yearCache[year];
+      const recs = await fetch(`data/years/${year}.json`).then((r) =>
+        r.ok ? r.json() : Promise.reject(r.status),
+      );
+      setYearCache((c) => ({ ...c, [year]: recs }));
+      return recs;
+    },
+    [yearCache],
+  );
 
   const reportYears = useMemo(
     () => (index ? [...new Set(index.map((r) => r.year))].sort() : []),
@@ -95,7 +90,7 @@ export default function Register() {
     });
   }, [index, query, entryType, reportYear]);
 
-  const exportName = [
+  const label = [
     "aog-necrology",
     reportYear !== "all" ? reportYear : null,
     entryType !== "all" ? entryType : null,
@@ -119,17 +114,66 @@ export default function Register() {
   function toggle(row: IndexRow) {
     const next = openId === row.id ? null : row.id;
     setOpenId(next);
-    if (next && !yearCache[row.year]) {
-      fetch(`data/years/${row.year}.json`)
-        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-        .then((recs) => setYearCache((c) => ({ ...c, [row.year]: recs })))
-        .catch(() => {});
+    if (next) loadYear(row.year).catch(() => {});
+  }
+
+  // Print the current search results as memorial documents.
+  async function printMatches() {
+    if (!matches.length || busy) return;
+    setBusy(true);
+    try {
+      const years = [...new Set(matches.map((r) => r.year))];
+      const maps = Object.fromEntries(
+        await Promise.all(years.map(async (y) => [y, await loadYear(y)] as const)),
+      );
+      const full = matches
+        .map((r) => maps[r.year]?.[r.id])
+        .filter((m): m is Memorial => Boolean(m));
+      const sub =
+        reportYear !== "all"
+          ? `Annual Report of ${reportYear}`
+          : query.trim()
+            ? `Search: “${query.trim()}” · ${full.length} memorials`
+            : `${full.length} memorials`;
+      printMemorials(full, "The Necrology", sub);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Print an entire year's necrology (every memorial in that report).
+  async function printYear(year: number) {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const map = await loadYear(year);
+      const full = Object.values(map).sort(byPage);
+      printMemorials(full, "Necrology", `Annual Report of ${year}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Print the complete record — every memorial, every year.
+  async function printAll() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const all: Memorial[] = await fetch("download/necrology.json").then((r) => r.json());
+      all.sort(
+        (a, b) => a.source_report_year - b.source_report_year || byPage(a, b),
+      );
+      printMemorials(all, "The Necrology of the Association of Graduates", "1870 – 1941");
+    } finally {
+      setBusy(false);
     }
   }
 
   if (loadError)
-    return <p className="status">The register failed to load. Refresh the page to try again.</p>;
+    return <p className="status">The register could not be opened. Refresh the page to try again.</p>;
   if (!index) return <p className="status">Opening the register…</p>;
+
+  const resultRows: ResultRow[] = matches;
 
   return (
     <section aria-label="Register of the deceased">
@@ -139,8 +183,9 @@ export default function Register() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name, class, Cullum number, or place of death"
+          placeholder="Search a name, class, Cullum number, or place of death"
           aria-label="Search the register"
+          autoFocus
         />
         <div className="filters">
           <label>
@@ -163,37 +208,62 @@ export default function Register() {
             </select>
           </label>
           <span className="count" role="status">
-            {matches.length.toLocaleString()} of {index.length.toLocaleString()} records
+            {matches.length.toLocaleString()} of {index.length.toLocaleString()}
           </span>
         </div>
-        <div className="exports" role="group" aria-label="Export current results">
-          <span className="exports-label">
-            Export {matches.length.toLocaleString()} result{matches.length === 1 ? "" : "s"}
+
+        <div className="results-actions" role="group" aria-label="Do something with these results">
+          <span className="actions-label">
+            These {matches.length.toLocaleString()} result{matches.length === 1 ? "" : "s"} —
           </span>
-          {EXPORTS.map((e) => (
-            <button
-              key={e.fmt}
-              type="button"
-              className="export-btn"
-              disabled={matches.length === 0}
-              title={e.hint}
-              onClick={() => exportRows(matches, e.fmt, exportName)}
-            >
-              {e.label}
-            </button>
-          ))}
+          <button
+            type="button"
+            className="chip chip-gold"
+            disabled={!matches.length || busy}
+            onClick={printMatches}
+            title="Open a printable / PDF memorial document of these results"
+          >
+            {busy ? "Preparing…" : "Print as memorials"}
+          </button>
+          <button
+            type="button"
+            className="chip"
+            disabled={!matches.length}
+            onClick={() => exportData(resultRows, "csv", label)}
+            title="Spreadsheet (Excel, Sheets)"
+          >
+            CSV
+          </button>
+          <button
+            type="button"
+            className="chip"
+            disabled={!matches.length}
+            onClick={() => exportData(resultRows, "json", label)}
+            title="Structured data"
+          >
+            JSON
+          </button>
         </div>
       </div>
 
       {matches.length === 0 && (
-        <p className="status">
-          No records match. Try a surname alone, or clear the filters.
-        </p>
+        <p className="status">No records match. Try a surname alone, or clear the filters.</p>
       )}
 
       {groups.map((g) => (
-        <div key={g.year}>
-          <h2 className="year-heading">Annual Report of {g.year}</h2>
+        <div key={g.year} className="year-block">
+          <div className="year-heading">
+            <h2>Annual Report of {g.year}</h2>
+            <button
+              type="button"
+              className="year-print"
+              disabled={busy}
+              onClick={() => printYear(g.year)}
+              title={`Print every memorial in the ${g.year} report`}
+            >
+              Print this report →
+            </button>
+          </div>
           {g.rows.map((r) => (
             <div key={r.id}>
               <button
@@ -210,7 +280,7 @@ export default function Register() {
                   {" · "}
                   {r.dod ?? r.dodr ?? "date unknown"}
                   {r.type === "death_notice" && (
-                    <span className="notice-mark" title="Death notice (no memorial text)">
+                    <span className="notice-mark" title="Death notice — no memorial text">
                       {" "}
                       †
                     </span>
@@ -225,15 +295,17 @@ export default function Register() {
 
       {matches.length > SHOW_CAP && (
         <p className="truncated">
-          Showing the first {SHOW_CAP} of {matches.length.toLocaleString()} matches — narrow the
-          search to see the rest.
+          Showing the first {SHOW_CAP} of {matches.length.toLocaleString()} — narrow the search to
+          see the rest, or print / export the full set above.
         </p>
       )}
+
+      <Deposit onPrintAll={printAll} busy={busy} total={index.length} />
     </section>
   );
 }
 
-function Detail({ row, record }: { row: IndexRow; record?: FullRecord }) {
+function Detail({ row, record }: { row: IndexRow; record?: Memorial }) {
   if (!record) return <div className="detail status">Fetching the record…</div>;
 
   const meta: [string, string | null][] = [
@@ -253,16 +325,26 @@ function Detail({ row, record }: { row: IndexRow; record?: FullRecord }) {
 
   return (
     <div className="detail">
-      <dl className="detail-meta">
-        {meta
-          .filter(([, v]) => v)
-          .map(([k, v]) => (
-            <span key={k} style={{ display: "contents" }}>
-              <dt>{k}</dt>
-              <dd>{v}</dd>
-            </span>
-          ))}
-      </dl>
+      <div className="detail-head">
+        <dl className="detail-meta">
+          {meta
+            .filter(([, v]) => v)
+            .map(([k, v]) => (
+              <span key={k} style={{ display: "contents" }}>
+                <dt>{k}</dt>
+                <dd>{v}</dd>
+              </span>
+            ))}
+        </dl>
+        <button
+          type="button"
+          className="print-memorial"
+          onClick={() => printMemorials([record], "In Memoriam")}
+          title="Open a printable / PDF memorial for this graduate"
+        >
+          Print this memorial
+        </button>
+      </div>
 
       {paragraphs.length > 0 ? (
         <div className="obit">
@@ -273,7 +355,7 @@ function Detail({ row, record }: { row: IndexRow; record?: FullRecord }) {
         </div>
       ) : (
         <p className="status">
-          A death notice only — no memorial was printed for {displayName(row)} this year.
+          A death notice recorded this year — no memorial was printed for {displayName(row)}.
         </p>
       )}
 
@@ -299,5 +381,61 @@ function Detail({ row, record }: { row: IndexRow; record?: FullRecord }) {
         )}
       </div>
     </div>
+  );
+}
+
+function Deposit({
+  onPrintAll,
+  busy,
+  total,
+}: {
+  onPrintAll: () => void;
+  busy: boolean;
+  total: number;
+}) {
+  return (
+    <section className="deposit" id="deposit" aria-label="Download the complete record">
+      <h2>Download the complete record</h2>
+      <p className="lede">
+        The entire register — {total.toLocaleString()} records — as a database, a spreadsheet, or
+        structured data. Yours to keep, search, and republish.
+      </p>
+      <div className="deposit-grid">
+        <a className="deposit-card" href="download/necrology.sqlite" download>
+          <span className="fmt">SQLite</span>
+          <span className="desc">Full database, full-text searchable</span>
+        </a>
+        <a className="deposit-card" href="download/necrology.csv" download>
+          <span className="fmt">CSV</span>
+          <span className="desc">Spreadsheet — Excel, Numbers, Sheets</span>
+        </a>
+        <a className="deposit-card" href="download/necrology.json" download>
+          <span className="fmt">JSON</span>
+          <span className="desc">Structured data for developers</span>
+        </a>
+      </div>
+
+      <button
+        type="button"
+        className="chip chip-gold deposit-print"
+        disabled={busy}
+        onClick={onPrintAll}
+        title="Open every memorial as one printable / PDF document"
+      >
+        {busy ? "Preparing…" : "Print the entire necrology →"}
+      </button>
+
+      <p className="deposit-tool">
+        This record was built by an open pipeline that harvests the scans, transcribes each page,
+        and compiles the database.{" "}
+        <a
+          href="https://github.com/melonmelonz/aog-necrology"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Download the tool and read how it works →
+        </a>
+      </p>
+    </section>
   );
 }

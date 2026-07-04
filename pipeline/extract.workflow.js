@@ -1,16 +1,21 @@
 // AOG extraction workflow — one Claude subagent per ~60-page chunk.
-//
-// This is a Claude Code *workflow* script (see the Workflow tool). It is NOT
-// run with node. Launch it from a Claude Code session like:
-//
+// This is a Claude Code *workflow* script (see the Workflow tool), NOT run with
+// node. Launch it from a Claude Code session like:
 //   Workflow({ scriptPath: "<abs path to this file>",
 //              args: <JSON array from `python pipeline/todo.py`> })
-//
 // Then re-run merge -> build_db -> site_data to fold the new parts in.
-//
+// NOTE: `export const meta` MUST be the first statement (the Workflow validator
+// requires it), so ROOT is declared just below it.
+
+export const meta = {
+  name: 'aog-extract',
+  description: 'Extract obituaries/death notices from AOG annual reports (one agent per chunk)',
+  phases: [{ title: 'Extract', detail: 'one agent per ~60-page chunk' }],
+}
+
 // === SET THIS to your checkout's absolute path before running ===
-const ROOT = 'C:\\Users\\Calvin\\aog-necrology'
 // Windows: double-backslashes.  macOS/Linux: e.g. '/home/kit/aog-necrology'.
+const ROOT = 'C:\\Users\\Calvin\\aog-necrology'
 //
 // Hard lessons baked in (do not "simplify" these away):
 //  - `args` can arrive as a JSON *string*; parse it (line below).
@@ -20,12 +25,6 @@ const ROOT = 'C:\\Users\\Calvin\\aog-necrology'
 //    limit trips, every in-flight and queued agent fails at once and you lose the
 //    whole batch for nothing. Small waves bound the blast radius; completed parts
 //    are already on disk, so `python pipeline/todo.py` always resumes cleanly.
-
-export const meta = {
-  name: 'aog-extract',
-  description: 'Extract obituaries/death notices from AOG annual reports (one agent per chunk)',
-  phases: [{ title: 'Extract', detail: 'one agent per ~60-page chunk' }],
-}
 
 const sep = ROOT.includes('\\') ? '\\' : '/'
 const p = (...parts) => [ROOT, ...parts].join(sep)

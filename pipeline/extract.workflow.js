@@ -49,7 +49,7 @@ const results = await pipeline(
     return agent(
       `You are extracting deceased-person records from the ${year} USMA Association of Graduates annual report.
 
-1. Read the spec: ${SPEC} - follow it exactly (record schema, light-corrections policy, skip rules, confidence guide).
+1. Read the spec: ${SPEC} - follow it exactly (record schema, light-corrections policy, skip rules, confidence guide, and the historical-content note). This is archival preservation of 1870-1941 military obituaries: some contain period-typical racist language or graphic combat narrative (Civil War, "Indian Wars", etc). Transcribe such passages faithfully and verbatim per the spec - do not soften, redact, or refuse due to that content.
 2. Read the chunk file: ${chunkFile}
    It contains pages ${start}-${end} of the ${year} report, plus a few continuation pages marked "[CONTINUATION ONLY - do not start new entries here]". Each page begins with a "===== PAGE N (pointer P, link L) =====" header; use that page's N for page_number and L for obit_link of entries that begin there.
 3. Extract EVERY in-scope death record (obituary or death_notice per the spec) that BEGINS on pages ${start}-${end}. Use continuation pages only to complete an entry that started in your range. If an entry begins in your range but its text is cut off at the end of the file, extract what is present, set page_end to the last available page, confidence "low", and note the truncation in confidence_notes.

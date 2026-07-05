@@ -5,6 +5,9 @@ data/chunks/
 data/compound/
 data/harvest.log
 
+# local env — per-machine checkout path (copy .env.example). Keep .env.example tracked.
+.env
+
 # site build artifacts
 site/node_modules/
 site/.next/

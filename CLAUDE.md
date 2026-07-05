@@ -81,11 +81,13 @@ and the confidence/`needs_vision` flags that drive review.
 ### How to run / resume it
 
 1. `python pipeline/todo.py --count` — see how many chunks remain.
-2. Set `ROOT` at the top of `pipeline/extract.workflow.js` to your checkout path.
-3. Launch a **wave** from a Claude Code session:
+2. Set your checkout path once: copy `.env.example` to `.env` and set `AOG_ROOT`
+   (per-machine, gitignored — no hardcoded path in the workflow).
+3. Launch a **wave** from a Claude Code session, passing your path + the slice:
    ```
    Workflow({ scriptPath: "<abs>/pipeline/extract.workflow.js",
-              args: <a slice of `python pipeline/todo.py` output> })
+              args: { root: "<AOG_ROOT from .env>",
+                      chunks: <a slice of `python pipeline/todo.py` output> } })
    ```
 4. When it returns, run the merge/build/site_data refresh above, commit, repeat.
 
@@ -163,8 +165,10 @@ chunk (`_p001-060`) may still be in `todo.py`. 1870 is a hand-checked pilot.
 
 **To resume extraction (any session):**
 1. `python pipeline/todo.py --count` — see remaining chunks.
-2. Take a slice (~25-40 chunks) of `python pipeline/todo.py` output.
-3. `Workflow({ scriptPath: "<abs>/pipeline/extract.workflow.js", args: <slice> })`
+2. Take a slice (~25-40 chunks) of `python pipeline/todo.py` output. Read
+   `AOG_ROOT` from `.env` (copy `.env.example` first if it's missing).
+3. `Workflow({ scriptPath: "<abs>/pipeline/extract.workflow.js",
+   args: { root: "<AOG_ROOT>", chunks: <slice> } })`
    (agents run on sonnet; small waves bound session-limit blast radius).
 4. `python pipeline/merge.py && python pipeline/build_db.py && python pipeline/site_data.py`
 5. `git add -A && git commit && git push` → live site auto-refreshes.

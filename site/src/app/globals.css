@@ -283,6 +283,225 @@ a:hover {
 }
 
 /* =========================================================================
+   The pitch — this archive as a live demonstration of the service.
+   A restrained "plate" (stone card + gold-deep top rule, reusing the .detail
+   idiom) set between the memorial hero and the register, so the register
+   below reads as the demo. Built only from existing tokens.
+   ========================================================================= */
+
+.pitch {
+  background: var(--stone);
+  border-top: 2px solid var(--gold-deep);
+  border-bottom: 1px solid var(--hairline);
+}
+.pitch-inner {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 3.6rem 1.25rem 4rem;
+  text-align: center;
+}
+.pitch-ornament {
+  color: var(--gold-deep);
+  margin-bottom: 1.2rem;
+}
+.pitch-ornament svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+.pitch-eyebrow {
+  font-family: var(--ui);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.68rem;
+  color: var(--gray);
+  margin: 0 0 0.9rem;
+}
+.pitch-headline {
+  font-family: var(--display);
+  font-weight: 500;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  font-size: clamp(1.9rem, 6vw, 2.9rem);
+  line-height: 1.05;
+  color: var(--ink);
+  margin: 0 auto;
+  max-width: 24ch;
+}
+.pitch-lede {
+  color: var(--gray);
+  font-size: clamp(1rem, 2.5vw, 1.12rem);
+  line-height: 1.7;
+  max-width: 40rem;
+  margin: 1.1rem auto 0;
+}
+.pitch-lede strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* featured value-prop: the shipped .docx automation */
+.pitch-feature {
+  margin: 2.6rem auto 0;
+  max-width: 40rem;
+  padding: 1.5rem 1.6rem;
+  text-align: left;
+  background: color-mix(in srgb, var(--gold) 12%, var(--stone));
+  border: 1px solid var(--gold-deep);
+}
+.pitch-feature-eyebrow {
+  font-family: var(--ui);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.62rem;
+  color: var(--gold-deep);
+  margin: 0 0 0.4rem;
+}
+.pitch-feature-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+  color: var(--ink);
+  margin: 0 0 0.5rem;
+}
+.pitch-feature-desc {
+  color: var(--gray);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* the deliverables — what the client gets */
+.pitch-values {
+  list-style: none;
+  margin: 2.4rem auto 0;
+  padding: 0;
+  max-width: 44rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem 2rem;
+  text-align: left;
+}
+.pitch-value {
+  border-top: 1px solid var(--hairline);
+  padding-top: 0.8rem;
+}
+.pitch-value-title {
+  display: block;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+.pitch-value-desc {
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--gray);
+}
+
+/* the visual aid — a four-stage pipeline */
+.pitch-flow-wrap {
+  margin: 3rem auto 0;
+  max-width: 46rem;
+}
+.pitch-flow-label {
+  font-family: var(--ui);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.66rem;
+  color: var(--gray);
+  margin: 0 0 1.4rem;
+}
+.pitch-flow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.pitch-stage {
+  position: relative;
+  text-align: center;
+  padding: 0 0.4rem;
+}
+.pitch-stage::before {
+  content: "";
+  position: absolute;
+  top: 1.05rem;
+  left: -0.6rem;
+  width: 1.2rem;
+  border-top: 1px solid var(--gold);
+}
+.pitch-stage:first-child::before {
+  display: none;
+}
+.pitch-stage-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid var(--gold-deep);
+  border-radius: 50%;
+  color: var(--gold-deep);
+  font-family: var(--ui);
+  font-size: 0.9rem;
+  margin-bottom: 0.7rem;
+}
+.pitch-stage-name {
+  display: block;
+  font-family: var(--display);
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  font-size: 1.12rem;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+.pitch-stage-desc {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--gray);
+}
+
+/* the call to action — the demo itself */
+.pitch-cta {
+  margin: 3.2rem auto 0;
+}
+.pitch-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--ui);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+  color: var(--gold-deep);
+  background: transparent;
+  border: 1px solid var(--gold-deep);
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  transition: background 140ms ease, color 140ms ease;
+}
+.pitch-cta-btn:hover {
+  background: var(--gold-deep);
+  color: #fff;
+}
+.pitch-cta-btn:focus-visible {
+  outline: 2px solid var(--gold-deep);
+  outline-offset: 3px;
+}
+.pitch-cta-note {
+  color: var(--gray);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 34rem;
+  margin: 1rem auto 0;
+}
+
+/* =========================================================================
    The register — the roll of names on granite
    ========================================================================= */
 
@@ -769,6 +988,23 @@ a:hover {
 
 /* responsive */
 @media (max-width: 620px) {
+  .pitch-inner {
+    padding: 2.6rem 1.05rem 3rem;
+  }
+  .pitch-feature {
+    padding: 1.2rem 1.1rem;
+  }
+  .pitch-values {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .pitch-flow {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .pitch-stage::before {
+    display: none; /* no horizontal connector when the stages stack */
+  }
   .searchbar {
     flex-direction: column;
     align-items: stretch;
@@ -811,6 +1047,7 @@ a:hover {
 /* if the page itself is printed, hide the machinery */
 @media print {
   .hero,
+  .pitch,
   .searchbar,
   .subcontrols,
   .year-print,

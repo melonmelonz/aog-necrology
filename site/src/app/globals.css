@@ -582,6 +582,11 @@ a:hover {
   flex-wrap: wrap;
   margin-bottom: 0.5rem;
 }
+.detail-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
 .detail-meta {
   display: grid;
   grid-template-columns: max-content 1fr;

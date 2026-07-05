@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   printMemorials,
   exportData,
+  downloadMemorialDocx,
   type Memorial,
   type ResultRow,
 } from "./exports";
@@ -348,14 +349,24 @@ function Detail({ row, record }: { row: IndexRow; record?: Memorial }) {
               </span>
             ))}
         </dl>
-        <button
-          type="button"
-          className="print-memorial"
-          onClick={() => printMemorials([record], "In Memoriam")}
-          title="Open a printable / PDF memorial for this graduate"
-        >
-          Print this memorial
-        </button>
+        <div className="detail-actions">
+          <button
+            type="button"
+            className="print-memorial"
+            onClick={() => printMemorials([record], "In Memoriam")}
+            title="Open a printable / PDF memorial for this graduate"
+          >
+            Print this memorial
+          </button>
+          <button
+            type="button"
+            className="print-memorial"
+            onClick={() => void downloadMemorialDocx(record)}
+            title="Download this memorial as a Word (.docx) document"
+          >
+            Download Word document
+          </button>
+        </div>
       </div>
 
       {paragraphs.length > 0 ? (

@@ -15,7 +15,7 @@ export const meta = {
 
 // === SET THIS to your checkout's absolute path before running ===
 // Windows: double-backslashes.  macOS/Linux: e.g. '/home/kit/aog-necrology'.
-const ROOT = 'C:\\Users\\Calvin\\aog-necrology'
+const ROOT = 'C:\\Users\\Kit\\OneDrive\\Desktop\\Tensfeldt\\GITHUB\\aog-necrology'
 //
 // Hard lessons baked in (do not "simplify" these away):
 //  - `args` can arrive as a JSON *string*; parse it (line below).

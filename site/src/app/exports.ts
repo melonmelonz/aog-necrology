@@ -273,8 +273,8 @@ export function toJSON(rows: ResultRow[]): string {
   );
 }
 
-export function downloadText(filename: string, mime: string, text: string) {
-  const blob = new Blob([text], { type: `${mime};charset=utf-8` });
+/** Trigger a browser download of an in-memory Blob — the shared download mechanism. */
+export function downloadBlob(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -285,8 +285,195 @@ export function downloadText(filename: string, mime: string, text: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+export function downloadText(filename: string, mime: string, text: string) {
+  downloadBlob(filename, new Blob([text], { type: `${mime};charset=utf-8` }));
+}
+
 export function exportData(rows: ResultRow[], format: "csv" | "json", label: string) {
   const base = label.replace(/[^\w.-]+/g, "-").replace(/^-+|-+$/g, "") || "aog-necrology";
   if (format === "csv") downloadText(`${base}.csv`, "text/csv", toCSV(rows));
   else downloadText(`${base}.json`, "application/json", toJSON(rows));
+}
+
+/* ---------- single memorial as a Word document (.docx) ---------- */
+//
+// Reconstructs the Association of Graduates memorial-article layout (see the
+// specimen the format was decoded from): a source hyperlink, the "Annual Report
+// {year} — Pg {n}" citation, a bold centred name / Cullum+class / death line,
+// the justified obituary body (with quoted passages indented as block quotes),
+// and the author's initials right-aligned. Aptos 12pt, US-Letter, ~0.9" margins.
+//
+// Built entirely in the browser: `docx` is loaded on demand (dynamic import →
+// its own JS chunk, so it costs nothing until someone clicks) and packed to a
+// Blob, which works on the fully static site — no server, no API route.
+
+/** Split obituary text into paragraphs, mirroring the register + print output. */
+function obitParagraphs(text: string): string[] {
+  return (text || "")
+    .split(/\n\s*\n/)
+    .map((p) => p.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+}
+
+// A paragraph that opens AND closes with a double quote is treated as a wholly
+// quoted passage and indented like the specimen's block quotes. The length guard
+// keeps short inline quips (which never stand alone as a paragraph here) flat.
+const OPEN_QUOTES = ['"', "“"]; //  "  “
+const CLOSE_QUOTES = ['"', "”"]; //  "  ”
+function isBlockQuote(p: string): boolean {
+  const t = p.trim();
+  if (t.length < 80) return false;
+  return OPEN_QUOTES.some((q) => t.startsWith(q)) && CLOSE_QUOTES.some((q) => t.endsWith(q));
+}
+
+/** The centred all-caps name heading: the as-printed name, else a built name. */
+function docxHeadingName(m: Memorial): string {
+  const base = (m.name_raw && m.name_raw.trim()) || naturalName(m);
+  return base.toUpperCase();
+}
+
+/** "Died {date}, at {place}, aged {age} years." — omitting whatever is missing. */
+function docxDeathLine(m: Memorial): string {
+  const date = m.date_of_death_raw || m.date_of_death || "";
+  let line = "";
+  if (date) line = `Died ${date}`;
+  if (m.location_of_death) line += line ? `, at ${m.location_of_death}` : `Died at ${m.location_of_death}`;
+  if (m.age_at_death != null) line += `${line ? "" : "Died"}, aged ${m.age_at_death} years`;
+  if (!line) return "";
+  return line.endsWith(".") ? line : line + "."; // avoid "Miss.." when a place ends in a period
+}
+
+/** `Lastname_ClassYear_memorial.docx`, filesystem-safe. */
+export function memorialFilename(m: Memorial): string {
+  const last =
+    (m.last_name || m.name_raw || "memorial").replace(/[^\w.-]+/g, "-").replace(/^-+|-+$/g, "") ||
+    "memorial";
+  const year = m.class_year != null ? String(m.class_year) : "n.d.";
+  return `${last}_${year}_memorial.docx`;
+}
+
+/** Build and download a single memorial as a formatted Word (.docx) document. */
+export async function downloadMemorialDocx(record: Memorial): Promise<void> {
+  const {
+    Document,
+    Packer,
+    Paragraph,
+    TextRun,
+    ExternalHyperlink,
+    AlignmentType,
+    LineRuleType,
+  } = await import("docx");
+
+  type Para = InstanceType<typeof Paragraph>;
+  type Run = InstanceType<typeof TextRun>;
+  const children: Para[] = [];
+
+  // 1. Source URL as a live hyperlink.
+  if (record.obit_link) {
+    children.push(
+      new Paragraph({
+        children: [
+          new ExternalHyperlink({
+            link: record.obit_link,
+            children: [new TextRun({ text: record.obit_link, style: "Hyperlink" })],
+          }),
+        ],
+      }),
+    );
+  }
+
+  // 2. "Annual Report {year}   Pg {page}" — "Annual Report" italic only.
+  const citation: Run[] = [
+    new TextRun({ text: "Annual Report", italics: true }),
+    new TextRun({ text: ` ${record.source_report_year}` }),
+  ];
+  if (record.page_number != null) {
+    const pg =
+      record.page_end && record.page_end !== record.page_number
+        ? `${record.page_number}–${record.page_end}`
+        : `${record.page_number}`;
+    citation.push(new TextRun({ text: `       Pg ${pg}` }));
+  }
+  children.push(new Paragraph({ children: citation }));
+
+  // 3. NAME — bold, centred, all-caps.
+  children.push(
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      indent: { firstLine: 720 },
+      children: [new TextRun({ text: docxHeadingName(record), bold: true })],
+    }),
+  );
+
+  // 4. "No. {cullum}  ⇥  CLASS OF {year}" — bold, centred; degrade if either absent.
+  const idRuns: Run[] = [];
+  if (record.cullum_number) {
+    idRuns.push(new TextRun({ text: `No. ${record.cullum_number} `, bold: true }));
+    if (record.class_year != null) idRuns.push(new TextRun({ text: "\t", bold: true }));
+  }
+  if (record.class_year != null) {
+    idRuns.push(new TextRun({ text: `CLASS OF ${record.class_year}`, bold: true }));
+  }
+  if (idRuns.length) {
+    children.push(
+      new Paragraph({ alignment: AlignmentType.CENTER, indent: { firstLine: 720 }, children: idRuns }),
+    );
+  }
+
+  // 5. "Died …, at …, aged … years." — bold, centred.
+  const death = docxDeathLine(record);
+  if (death) {
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [new TextRun({ text: death, bold: true })],
+      }),
+    );
+  }
+
+  // 6+. Obituary body — justified; wholly-quoted paragraphs indented as block quotes.
+  for (const p of obitParagraphs(record.obit_text)) {
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.BOTH,
+        indent: isBlockQuote(p) ? { left: 720, right: 720 } : undefined,
+        children: [new TextRun({ text: p })],
+      }),
+    );
+  }
+
+  // last. Author (initials / signature) — right-aligned.
+  if (record.author) {
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.RIGHT,
+        indent: { firstLine: 720 },
+        children: [new TextRun({ text: record.author })],
+      }),
+    );
+  }
+
+  const doc = new Document({
+    styles: {
+      default: {
+        document: {
+          run: { font: "Aptos", size: 24 }, // 24 half-points = 12pt
+          paragraph: { spacing: { after: 160, line: 278, lineRule: LineRuleType.AUTO } },
+        },
+      },
+    },
+    sections: [
+      {
+        properties: {
+          page: {
+            size: { width: 12240, height: 15840 }, // US Letter, twips
+            margin: { top: 1296, right: 1296, bottom: 1296, left: 1296 }, // ~0.9"
+          },
+        },
+        children,
+      },
+    ],
+  });
+
+  downloadBlob(memorialFilename(record), await Packer.toBlob(doc));
 }

@@ -25,8 +25,10 @@ python pipeline/todo.py --count          # e.g. "done 21 / total 258, todo 237"
 python pipeline/todo.py                   # prints [[year,start,end], ...]
 
 # 3. Run the wave with the extraction workflow (agents on 'sonnet'):
-#    From a Claude Code session, call the Workflow tool:
-#    Workflow({ scriptPath: "<abs>/pipeline/extract.workflow.js", args: <your slice> })
+#    First set your path once: copy .env.example -> .env and set AOG_ROOT.
+#    From a Claude Code session, call the Workflow tool (pass your path + slice):
+#    Workflow({ scriptPath: "<abs>/pipeline/extract.workflow.js",
+#               args: { root: "<AOG_ROOT from .env>", chunks: <your slice> } })
 
 # 4. Fold the results in and refresh the site + downloads:
 python pipeline/merge.py && python pipeline/build_db.py && python pipeline/site_data.py

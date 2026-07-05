@@ -13,9 +13,12 @@ export const meta = {
   phases: [{ title: 'Extract', detail: 'one agent per ~60-page chunk' }],
 }
 
-// === SET THIS to your checkout's absolute path before running ===
-// Windows: double-backslashes.  macOS/Linux: e.g. '/home/kit/aog-necrology'.
-const ROOT = 'C:\\Users\\Calvin\\aog-necrology'
+// === ROOT — your checkout's absolute path. NOT hardcoded (Kit, Cam, ... differ) ===
+// Set AOG_ROOT in .env (copy .env.example). A Workflow script has no filesystem or
+// env access of its own, so the LAUNCHER supplies it. Canonical launch:
+//   Workflow({ scriptPath: "<abs>/pipeline/extract.workflow.js",
+//              args: { root: <AOG_ROOT from .env>, chunks: <slice of todo.py> } })
+// A bare chunk array still works if the runtime exposes AOG_ROOT in the environment.
 //
 // Hard lessons baked in (do not "simplify" these away):
 //  - `args` can arrive as a JSON *string*; parse it (line below).
@@ -26,11 +29,15 @@ const ROOT = 'C:\\Users\\Calvin\\aog-necrology'
 //    whole batch for nothing. Small waves bound the blast radius; completed parts
 //    are already on disk, so `python pipeline/todo.py` always resumes cleanly.
 
+const a = typeof args === 'string' ? JSON.parse(args) : args
+const envRoot = (typeof process !== 'undefined' && process.env && process.env.AOG_ROOT) || ''
+const ROOT = (a && !Array.isArray(a) && a.root) || envRoot
+const chunks = Array.isArray(a) ? a : (a && a.chunks) || []
+if (!ROOT) throw new Error('AOG_ROOT not set: copy .env.example to .env, set your path, then pass args:{root,chunks} (or export AOG_ROOT).')
 const sep = ROOT.includes('\\') ? '\\' : '/'
 const p = (...parts) => [ROOT, ...parts].join(sep)
 const pad = n => String(n).padStart(3, '0')
 const SPEC = p('pipeline', 'extraction-spec.md')
-const chunks = typeof args === 'string' ? JSON.parse(args) : args
 
 phase('Extract')
 const results = await pipeline(

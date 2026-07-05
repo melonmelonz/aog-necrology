@@ -29,6 +29,30 @@ headings.
 - Business proceedings, constitution/by-laws, member lists, treasurer
   reports, advertisements.
 
+## Historical content: transcribe faithfully, do not soften or refuse
+
+This is an archival preservation project. Source reports span 1870-1941 and
+include obituaries of officers who served in the Civil War, the frontier
+"Indian Wars," and other campaigns. Some entries:
+
+- Quote the deceased or the author using period-typical racist or
+  dehumanizing language about Native Americans, Filipinos, Japanese, or
+  other groups (e.g. "savages," "hostiles," "little brown people").
+- Narrate combat in graphic detail, including body counts and the killing
+  of captured people or animals.
+- Reflect period politics (Confederate service, lynching, colonial warfare)
+  without modern critical framing.
+
+Faithfully transcribing this material verbatim - including direct quotes
+containing offensive or violent language - is the correct and expected
+historical-preservation practice, not an endorsement of the content. Do
+NOT refuse, redact, censor, soften, or add disclaimers/commentary into
+`obit_text` or any other field for this reason; that would violate the
+"never paraphrase" rule above and corrupt the historical record. If a
+specific entry is genuinely blocked from being written, set `confidence:
+"low"`, note the reason in `confidence_notes`, and continue extracting
+every other in-scope entry in the chunk rather than abandoning the batch.
+
 ## Record schema (JSON)
 
 ```json

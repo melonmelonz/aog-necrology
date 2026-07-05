@@ -75,7 +75,10 @@ Work through the pages in order and be meticulous: every death record, full text
           required: ['records', 'obituaries', 'death_notices', 'needs_vision', 'notes'],
         },
       }
-    ).then(r => ({ year, start, end, ...r }))
+    // agent() resolves to null on a terminal failure (e.g. content-filter block).
+    // Must stay null here, NOT {...null} -> {year,start,end} — that truthy object
+    // would slip past `filter(Boolean)` below and get miscounted as done/ok.
+    ).then(r => (r ? { year, start, end, ...r } : null))
   }
 )
 

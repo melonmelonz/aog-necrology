@@ -1,4 +1,4 @@
-// AOG extraction workflow — one Claude subagent per ~60-page chunk.
+// AOG extraction workflow - one Claude subagent per ~60-page chunk.
 // This is a Claude Code *workflow* script (see the Workflow tool), NOT run with
 // node. Launch it from a Claude Code session like:
 //   Workflow({ scriptPath: "<abs path to this file>",
@@ -13,7 +13,7 @@ export const meta = {
   phases: [{ title: 'Extract', detail: 'one agent per ~60-page chunk' }],
 }
 
-// === ROOT — your checkout's absolute path. NOT hardcoded (Kit, Cam, ... differ) ===
+// === ROOT - your checkout's absolute path. NOT hardcoded (Kit, Cam, ... differ) ===
 // Set AOG_ROOT in .env (copy .env.example). A Workflow script has no filesystem or
 // env access of its own, so the LAUNCHER supplies it. Canonical launch:
 //   Workflow({ scriptPath: "<abs>/pipeline/extract.workflow.js",
@@ -22,7 +22,7 @@ export const meta = {
 //
 // Hard lessons baked in (do not "simplify" these away):
 //  - `args` can arrive as a JSON *string*; parse it (line below).
-//  - Run on 'sonnet', not opus/fable — this is mechanical spec-following work;
+//  - Run on 'sonnet', not opus/fable - this is mechanical spec-following work;
 //    opus drains fast and fable has a low cap. Sonnet is cheap and accurate here.
 //  - Feed it in WAVES (~20-40 chunks), not all ~250 at once. When a usage/session
 //    limit trips, every in-flight and queued agent fails at once and you lose the
@@ -76,7 +76,7 @@ Work through the pages in order and be meticulous: every death record, full text
         },
       }
     // agent() resolves to null on a terminal failure (e.g. content-filter block).
-    // Must stay null here, NOT {...null} -> {year,start,end} — that truthy object
+    // Must stay null here, NOT {...null} -> {year,start,end} - that truthy object
     // would slip past `filter(Boolean)` below and get miscounted as done/ok.
     ).then(r => (r ? { year, start, end, ...r } : null))
   }

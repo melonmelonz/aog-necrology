@@ -182,7 +182,7 @@ export default function Register() {
   return (
     <section className="register" id="register" aria-label="Register of the deceased">
       <div className="reg-intro">
-        <h2>The Necrology · 1870–1941</h2>
+        <h2>The Memorial Articles · 1870–1941</h2>
         <p>
           Every graduate whose death was reported to the Association of Graduates —
           transcribed from the printed reports, kept as written, and linked to the
